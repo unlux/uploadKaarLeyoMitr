@@ -6,12 +6,15 @@ import { Button } from "./ui/button";
 import { Label } from "./ui/label";
 import { Preview } from "./Preview";
 import OldUploads from "./OldUploads";
+import { Alert, AlertDescription, AlertTitle } from "./ui/alert";
 
 export default function InputFields() {
   const [name, setName] = useState<string>("");
   const [file, setFile] = useState<File | undefined>();
+  const [size, setSize] = useState<number>(0);
   const [uploading, setUploading] = useState(false);
   const [presignedGETURL, setPresignedGETURL] = useState<string | undefined>();
+  const [resp, setResp] = useState("");
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -28,15 +31,19 @@ export default function InputFields() {
     try {
       const response = await fetch("/upload", {
         method: "POST",
-        body: JSON.stringify({ fileName: file?.name, username: name }),
+        body: JSON.stringify({
+          fileName: file?.name,
+          username: name,
+          fileSize: size,
+        }),
         headers: {
           "Content-Type": "application/json",
         },
       });
 
       const data = await response.json();
-      const { presignedGETURL, presignedPUTURL } = data;
-
+      const { presignedGETURL, presignedPUTURL, message } = data;
+      setResp(message);
       await fetch(presignedPUTURL, {
         method: "PUT",
         body: file,
@@ -46,6 +53,7 @@ export default function InputFields() {
         "----------------------------Presigned GET URL: ",
         presignedGETURL
       );
+      console.log("======================resp", resp);
       setPresignedGETURL(presignedGETURL);
       setUploading(false);
     } catch (error) {
@@ -62,6 +70,7 @@ export default function InputFields() {
     };
 
     setFile(target.files[0]);
+    setSize(target.files[0].size);
     console.log(target.files[0]);
   };
 
@@ -116,6 +125,16 @@ export default function InputFields() {
       </Card>
       <OldUploads username={name} />
       <div>{presignedGETURL && <Preview url={presignedGETURL} />}</div>
+      <div>
+        {resp && (
+          <div>
+            <Alert>
+              <AlertTitle>Heads up!</AlertTitle>
+              <AlertDescription>{resp}</AlertDescription>
+            </Alert>
+          </div>
+        )}
+      </div>
     </>
   );
 }
