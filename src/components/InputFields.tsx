@@ -6,7 +6,6 @@ import { Button } from "./ui/button";
 import { Label } from "./ui/label";
 import { Preview } from "./Preview";
 import OldUploads from "./OldUploads";
-import { Alert, AlertDescription, AlertTitle } from "./ui/alert";
 
 export default function InputFields() {
   const [name, setName] = useState<string>("");
