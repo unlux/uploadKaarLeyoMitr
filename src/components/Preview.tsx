@@ -1,5 +1,9 @@
 import Image from "next/image";
 import { useEffect, useState } from "react";
+import { Button } from "./ui/button";
+import toast, { Toaster } from "react-hot-toast";
+
+const notify = () => toast("copied successfully");
 
 interface PreviewProps {
   url: string;
@@ -32,9 +36,20 @@ export function Preview({ url }: PreviewProps) {
 
   return (
     <div>
-      <h2>Presigned GET URL:</h2>
+      <h2>
+        Presigned GET URL:
+        <Button
+          onClick={() => {
+            navigator.clipboard.writeText(url);
+          }}
+        >
+          Copy
+        </Button>
+      </h2>
+      <br />
       {loading && <p>Loading...</p>}
       {error && <p>{error}</p>}
+      Preview:
       {preview && (
         <Image src={preview} width={500} height={500} alt="Preview Image" />
       )}

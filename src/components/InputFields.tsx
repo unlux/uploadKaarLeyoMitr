@@ -84,8 +84,8 @@ export default function InputFields() {
     <>
       <Card>
         <CardHeader>
-          <div className="text-center bg-slate-400 rounded-3xl ">
-            File upload karleyo mitro
+          <div className="text-center dark:bg-slate-700 bg-slate-400 rounded-3xl ">
+            File upload karleyo
           </div>
         </CardHeader>
         <CardContent>
@@ -125,16 +125,6 @@ export default function InputFields() {
       </Card>
       <OldUploads username={name} />
       <div>{presignedGETURL && <Preview url={presignedGETURL} />}</div>
-      <div>
-        {resp && (
-          <div>
-            <Alert>
-              <AlertTitle>Heads up!</AlertTitle>
-              <AlertDescription>{resp}</AlertDescription>
-            </Alert>
-          </div>
-        )}
-      </div>
     </>
   );
 }
