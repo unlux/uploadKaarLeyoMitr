@@ -6,6 +6,7 @@ import { Label } from "./ui/label";
 import { Preview } from "./Preview";
 import OldUploads from "./OldUploads";
 import { useEffect, useState } from "react";
+import { toast } from "sonner";
 
 export default function InputFields() {
   const [name, setName] = useState<string>("");
@@ -52,8 +53,15 @@ export default function InputFields() {
       });
 
       const data = await response.json();
+      console.log(data);
+
       const { presignedGETURL, presignedPUTURL, message } = data;
-      setResp(message);
+
+      {
+        message === "Uploaded Successfully"
+          ? toast.success(message)
+          : toast.error(message);
+      }
       await fetch(presignedPUTURL, {
         method: "PUT",
         body: file,
@@ -82,7 +90,7 @@ export default function InputFields() {
     <>
       <Card>
         <CardHeader>
-          <div className="text-center dark:bg-slate-700 bg-slate-400 rounded-3xl ">
+          <div className="text-center dark:bg-gray-700 bg-gray-400 rounded-3xl p-1 shadow-md">
             File upload karleyo
           </div>
         </CardHeader>
@@ -111,20 +119,24 @@ export default function InputFields() {
                 className="mt-1 block w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 cursor-pointer dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400"
               />
             </div>
-            <div className="flex justify-end">
+            <div className="flex ">
               <Button
                 type="submit"
                 disabled={!file || uploading}
-                className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50"
+                className="flex justify-center mx-auto h-full pt-2 items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50"
               >
-                {uploading ? "Uploading" : "Upload"}
+                {uploading
+                  ? "Uploading"
+                  : !file
+                  ? "Upload (disabled)"
+                  : "Click to Upload"}
               </Button>
             </div>
           </form>
         </CardContent>
       </Card>
-      <OldUploads username={name} />
       <div>{presignedGETURL && <Preview url={presignedGETURL} />}</div>
+      <OldUploads username={name} />
     </>
   );
 }
